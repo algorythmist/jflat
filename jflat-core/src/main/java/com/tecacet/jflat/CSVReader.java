@@ -22,16 +22,16 @@ public class CSVReader<T> extends GenericFlatFileReader<T> {
         return this;
     }
 
-    public static CSVReader<String[]> createDefaultReader() {
+    public static CSVReader<String[]> defaultReader() {
         return new CSVReader<>(new ArrayBeanMapper());
     }
 
-    public static <T> CSVReader<T> createWithIndexMapping(Class<T> type, String[] properties) {
+    public static <T> CSVReader<T> readerWithIndexMapping(Class<T> type, String[] properties) {
         return new CSVReader<>(new IndexBeanMapper<>(type, properties))
                 .withFormat(CSVFormat.DEFAULT);
     }
 
-    public static <T> CSVReader<T> createWithHeaderMapping(Class<T> type,
+    public static <T> CSVReader<T> readerWithHeaderMapping(Class<T> type,
                                                            String[] header,
                                                            String[] properties) {
         return new CSVReader<>(new HeaderBeanMapper<>(type, header, properties))

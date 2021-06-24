@@ -20,7 +20,7 @@ class FixedWidthWriterTest {
 
     @Test
     void testDefaultWriter() throws IOException {
-        CSVReader<String[]> reader = CSVReader.createDefaultReader()
+        CSVReader<String[]> reader = CSVReader.defaultReader()
                 .withFormat(CSVFormat.RFC4180
                         .withFirstRecordAsHeader()
                         .withSkipHeaderRecord(true));

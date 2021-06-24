@@ -17,7 +17,7 @@ class CSVReaderTest {
 
     @Test
     void testDefaultReader() throws IOException {
-        CSVReader<String[]> reader = CSVReader.createDefaultReader()
+        CSVReader<String[]> reader = CSVReader.defaultReader()
                 .withFormat(CSVFormat.RFC4180
                         .withFirstRecordAsHeader()
                         .withSkipHeaderRecord(true));
@@ -30,7 +30,7 @@ class CSVReaderTest {
 
     @Test
     void testWithIndexedMapping() throws IOException {
-        FlatFileReader<ClassicQuote> csvReader = CSVReader.createWithIndexMapping(ClassicQuote.class,
+        FlatFileReader<ClassicQuote> csvReader = CSVReader.readerWithIndexMapping(ClassicQuote.class,
                 new String[]{"date", "open", null, null, "close", "volume", null})
                 .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader().withSkipHeaderRecord());
         List<ClassicQuote> quotes = csvReader.readAll("GLD.csv");
@@ -42,7 +42,7 @@ class CSVReaderTest {
 
     @Test
     public void readAsStream() throws IOException {
-        FlatFileReader<ImmutableQuote> csvReader = CSVReader.createWithIndexMapping(ImmutableQuote.class,
+        FlatFileReader<ImmutableQuote> csvReader = CSVReader.readerWithIndexMapping(ImmutableQuote.class,
                 new String[]{"date", "open", null, null, "close", "volume", "adjustedClose"})
                 .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader().withSkipHeaderRecord());
         LocalDate date = LocalDate.of(2015, 5, 1);
@@ -55,7 +55,7 @@ class CSVReaderTest {
 
     @Test
     void readWithCallback() throws IOException {
-        FlatFileReader<ImmutableQuote> csvReader = CSVReader.createWithIndexMapping(ImmutableQuote.class,
+        FlatFileReader<ImmutableQuote> csvReader = CSVReader.readerWithIndexMapping(ImmutableQuote.class,
                 new String[]{"date", "open", null, null, "close", "volume", "adjustedClose"})
                 .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader().withSkipHeaderRecord());
 
@@ -70,7 +70,7 @@ class CSVReaderTest {
         String[] header = {"Date", "Open", "Volume"};
 
         FlatFileReader<ImmutableQuote> csvReader =
-                CSVReader.createWithHeaderMapping(ImmutableQuote.class, header, properties);
+                CSVReader.readerWithHeaderMapping(ImmutableQuote.class, header, properties);
         List<ImmutableQuote> quotes = csvReader.readAll("GLD.csv");
         assertEquals(134, quotes.size());
         ImmutableQuote quote = quotes.get(0);
@@ -83,7 +83,7 @@ class CSVReaderTest {
     void testWithTDFFormat() throws IOException {
         String[] properties = {"firstName", "lastName", "telephone",
                 "address.numberAndStreet", "address.city", "address.state", "address.zip"};
-        CSVReader<Contact> csvReader = CSVReader.createWithIndexMapping(Contact.class, properties)
+        CSVReader<Contact> csvReader = CSVReader.readerWithIndexMapping(Contact.class, properties)
                 .withFormat(CSVFormat.TDF)
                 .registerConverter(Telephone.class, Telephone::new);
 
@@ -105,7 +105,7 @@ class CSVReaderTest {
         String[] properties = {"firstName", "lastName", "telephone"};
         String[] header = {"First Name", "Last Name", "Phone"};
         CSVReader<Contact> csvReader = CSVReader
-                .createWithHeaderMapping(Contact.class, header, properties)
+                .readerWithHeaderMapping(Contact.class, header, properties)
                 .registerConverter(Telephone.class, Telephone::new);
         List<Contact> contacts = csvReader.readAll("contacts.csv");
         assertEquals(3, contacts.size());
@@ -120,7 +120,7 @@ class CSVReaderTest {
         String[] properties = {"firstName", "lastName", "telephone"};
         String[] header = {"First Name", "Last Name", "Phone"};
         FlatFileReader<Contact> csvReader = CSVReader
-                .createWithHeaderMapping(Contact.class, header, properties)
+                .readerWithHeaderMapping(Contact.class, header, properties)
                 .registerConverter("telephone", Telephone::new);
         List<Contact> contacts = csvReader.readAll("contacts.csv");
         assertEquals(3, contacts.size());
@@ -136,7 +136,7 @@ class CSVReaderTest {
         String[] header = {"First Name", "Last Name", "Phone"};
         Function<String, Telephone> telephoneConverter = Telephone::new;
         FlatFileReader<Contact> csvReader = CSVReader
-                .createWithHeaderMapping(Contact.class, header, properties)
+                .readerWithHeaderMapping(Contact.class, header, properties)
                 .registerConverter(Telephone.class, s -> null)
                 .registerConverter("telephone", telephoneConverter);
         List<Contact> contacts = csvReader.readAll("contacts.csv");
@@ -153,10 +153,35 @@ class CSVReaderTest {
         String[] properties = {"firstName", "lastName", "telephone"};
         String[] header = {"First Name", "Last Name", "Phone"};
         CSVReader<Contact> csvReader = CSVReader
-                .createWithHeaderMapping(Contact.class, header, properties)
+                .readerWithHeaderMapping(Contact.class, header, properties)
                 .registerConverter(Telephone.class, Telephone::new)
                 .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader().withCommentMarker('#'));
         List<Contact> contacts = csvReader.readAll("contacts_with_comments.csv");
         assertEquals(3, contacts.size());
+    }
+
+    @Test
+    void testReaderWithCallback() throws IOException {
+        List<Order> orders = new ArrayList<>();
+        FlatFileReaderCallback<Order> callback = (record, order) -> {
+            String[] name = record.get(1).split(",");
+            String lastName = name[0];
+            String firstName = name[1];
+            order.setCustomer(new Customer());
+            order.getCustomer().setLastName(lastName);
+            order.getCustomer().setFirstName(firstName);
+            orders.add(order);
+        };
+
+        String[] properties = new String[] { "number", "price" };
+        String[] header = new String[] { "Number", "Price" };
+        CSVReader<Order> csvReader = CSVReader.readerWithHeaderMapping(Order.class, header, properties);
+        csvReader.read("orders.csv", callback);
+        assertEquals(2, orders.size());
+
+        Order order = orders.get(1);
+        Customer customer = order.getCustomer();
+        assertEquals("Bob", customer.getFirstName());
+        assertEquals("Marley", customer.getLastName());
     }
 }
