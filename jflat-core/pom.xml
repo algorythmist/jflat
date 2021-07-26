@@ -9,6 +9,13 @@
     <version>1.3.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <name>JFlat</name>
+    <description>
+        Convert flat files to Java Beans and vice versa.
+        Some supported formats are CSV, fixed-width, arbitrary regex, and more.
+        JFlat is highly extensible and can be adopted to support additional formats.
+    </description>
+
     <properties>
         <coverage.totalLineRate>0.90</coverage.totalLineRate>
         <coverage.missedclasses>0</coverage.missedclasses>

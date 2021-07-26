@@ -9,6 +9,11 @@
     <version>1.3.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <name>JFlat</name>
+    <description>
+       JFlat extension to read and write excel files
+    </description>
+
     <properties>
         <poi.version>5.0.0</poi.version>
         <coverage.totalLineRate>0.75</coverage.totalLineRate>
