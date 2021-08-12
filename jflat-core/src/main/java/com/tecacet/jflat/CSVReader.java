@@ -17,6 +17,16 @@ public class CSVReader<T> extends GenericFlatFileReader<T> {
         return this;
     }
 
+    public CSVReader<T> withSkipHeader() {
+        getParser().withSkipHeader();
+        return this;
+    }
+
+    public CSVReader<T> withDelimiter(char delimiter) {
+        getParser().withDelimiter(delimiter);
+        return this;
+    }
+
     public CSVReader<T> withFormat(CSVFormat csvFormat) {
         setParser(new CSVFileParser(csvFormat));
         return this;

@@ -1,5 +1,6 @@
 package com.tecacet.jflat.impl;
 
+import com.tecacet.jflat.CSVReader;
 import com.tecacet.jflat.FlatFileParser;
 import com.tecacet.jflat.RowRecord;
 import org.apache.commons.csv.CSVFormat;
@@ -12,7 +13,7 @@ import java.util.Iterator;
 
 public class CSVFileParser implements FlatFileParser {
 
-    private final CSVFormat csvFormat;
+    private CSVFormat csvFormat;
 
     public CSVFileParser(CSVFormat csvFormat) {
         this.csvFormat = csvFormat;
@@ -36,7 +37,11 @@ public class CSVFileParser implements FlatFileParser {
         };
     }
 
-    public CSVFormat getCSVFormat() {
-        return csvFormat;
+    public void withSkipHeader() {
+        this.csvFormat = csvFormat.withFirstRecordAsHeader();
+    }
+
+    public void withDelimiter(char delimiter) {
+        this.csvFormat = csvFormat.withDelimiter(delimiter);
     }
 }

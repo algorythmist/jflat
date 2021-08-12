@@ -29,6 +29,18 @@ class CSVReaderTest {
     }
 
     @Test
+    void testDefaultReaderWithCustomDelimiter() throws IOException {
+        CSVReader<String[]> reader = CSVReader.defaultReader()
+                .withSkipHeader()
+                .withDelimiter('|');
+        List<String[]> contacts = reader.readAll("contacts.custom.txt");
+        assertEquals(3, contacts.size());
+        assertEquals("Homer", contacts.get(0)[0]);
+        assertEquals("Skinner", contacts.get(1)[1]);
+        assertEquals("9081672312", contacts.get(2)[2]);
+    }
+
+    @Test
     void testWithIndexedMapping() throws IOException {
         FlatFileReader<ClassicQuote> csvReader = CSVReader.readerWithIndexMapping(ClassicQuote.class,
                 new String[]{"date", "open", null, null, "close", "volume", null})
