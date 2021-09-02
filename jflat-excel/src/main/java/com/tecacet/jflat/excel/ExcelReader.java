@@ -40,7 +40,7 @@ public class ExcelReader<T> extends AbstractFlatFileReader<T> {
         Iterable<RowRecord> records = parser.parse(is);
         for (RowRecord record : records) {
             T bean = beanMapper.apply(record);
-            callback.accept(record, bean);
+            bean = callback.apply(record, bean);
         }
     }
 

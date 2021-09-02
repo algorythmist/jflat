@@ -43,16 +43,15 @@ public interface FlatFileReader<T> {
     }
 
     default List<T> readAll(InputStream is) throws IOException {
-        List<T> list = new ArrayList<>();
-        read(is, (record, bean) -> list.add(bean));
-        return list;
+        return readAllWithCallback(is, (record, bean) -> bean);
     }
 
     default List<T> readAllWithCallback(InputStream is, FlatFileReaderCallback<T> callback) throws IOException {
         List<T> list = new ArrayList<>();
         read(is, (record, bean) -> {
-            callback.accept(record, bean);
+            bean = callback.apply(record, bean);
             list.add(bean);
+            return bean;
         });
         return list;
     }

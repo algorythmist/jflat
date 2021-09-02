@@ -72,7 +72,10 @@ class CSVReaderTest {
                 .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader().withSkipHeaderRecord());
 
         List<RowRecord> records = new ArrayList<>();
-        csvReader.read("GLD.csv", (row, bean) -> records.add(row));
+        csvReader.read("GLD.csv", (row, bean) -> {
+            records.add(row);
+            return null;
+        });
         assertEquals(134, records.size());
     }
 
@@ -174,7 +177,6 @@ class CSVReaderTest {
 
     @Test
     void testReaderWithCallback() throws IOException {
-        List<Order> orders = new ArrayList<>();
         FlatFileReaderCallback<Order> callback = (record, order) -> {
             String[] name = record.get(1).split(",");
             String lastName = name[0];
@@ -182,13 +184,13 @@ class CSVReaderTest {
             order.setCustomer(new Customer());
             order.getCustomer().setLastName(lastName);
             order.getCustomer().setFirstName(firstName);
-            orders.add(order);
+            return order;
         };
 
         String[] properties = new String[] { "number", "price" };
         String[] header = new String[] { "Number", "Price" };
         CSVReader<Order> csvReader = CSVReader.readerWithHeaderMapping(Order.class, header, properties);
-        csvReader.read("orders.csv", callback);
+        List<Order> orders = csvReader.readAllWithCallback("orders.csv", callback);
         assertEquals(2, orders.size());
 
         Order order = orders.get(1);
