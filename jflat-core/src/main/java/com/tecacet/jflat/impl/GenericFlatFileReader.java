@@ -28,7 +28,7 @@ public class GenericFlatFileReader<T> extends AbstractFlatFileReader<T> {
                     continue;
                 }
                 T bean = beanMapper.apply(record);
-                callback.accept(record, bean);
+                bean = callback.apply(record, bean);
             }
         }
     }

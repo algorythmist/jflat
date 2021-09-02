@@ -28,7 +28,7 @@
         <maven.javadoc-plugin.failOnError>false</maven.javadoc-plugin.failOnError>
         <nexus-staging-plugin.version>1.6.8</nexus-staging-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.31</slf4j.version>
+        <slf4j.version>[1.7.30)</slf4j.version>
         <junit-jupiter.version>5.7.2</junit-jupiter.version>
         <jacoco.version>0.8.7</jacoco.version>
     </properties>
@@ -39,11 +39,13 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

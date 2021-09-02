@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,15 +28,16 @@ class FixedWidthReaderTest {
     @Test
     void testWithIndexedMapping() throws IOException {
         FixedWidthReader<Contact> reader = FixedWidthReader.createWithIndexMapping(
-                Contact.class,
-                new String[]{"name", "address.state", "telephone"},
-                new int[]{20, 10, 12})
+                        Contact.class,
+                        new String[]{"name", "address.state", "telephone"},
+                        new int[]{20, 10, 12})
                 .withSkipRows(1)
                 .registerConverter(Telephone.class, Telephone::new);
         List<Contact> contacts = reader.readAllWithCallback("directory.txt", (record, contact) -> {
             String[] fullName = record.get(0).trim().split("\\s+");
             contact.setFirstName(fullName[0]);
             contact.setLastName(fullName[1]);
+            return contact;
         });
         assertEquals(3, contacts.size());
         Contact contact = contacts.get(1);
@@ -50,8 +50,8 @@ class FixedWidthReaderTest {
     @Test
     public void testReadAsStream() throws IOException {
         FixedWidthReader<Contact> reader = FixedWidthReader.createWithIndexMapping(Contact.class,
-                new String[]{"lastName", "address.state", "telephone"},
-                new int[]{20, 10, 12})
+                        new String[]{"lastName", "address.state", "telephone"},
+                        new int[]{20, 10, 12})
                 .registerConverter(Telephone.class, Telephone::new);
         InputStream is = ClassLoader.getSystemResourceAsStream("directory.txt");
         try (InputStreamReader r = new InputStreamReader(is)) {
@@ -67,17 +67,17 @@ class FixedWidthReaderTest {
     @Test
     void readWithCallback() throws IOException {
         FixedWidthReader<Contact> reader = FixedWidthReader.createWithIndexMapping(Contact.class,
-                new String[]{"lastName", "address.state", "telephone"},
-                new int[]{20, 10, 12})
+                        new String[]{"lastName", "address.state", "telephone"},
+                        new int[]{20, 10, 12})
                 .withSkipRows(1)
                 .registerConverter("telephone", Telephone::new);
-        List<Contact> contacts = new ArrayList<>();
-        reader.read("directory.txt", (record, contact) -> {
-            String[] tokens = record.get(0).split("\\s+");
-            contact.setFirstName(tokens[0].trim());
-            contact.setLastName(tokens[1].trim());
-            contacts.add(contact);
-        });
+        List<Contact> contacts =
+                reader.readAllWithCallback("directory.txt", (record, contact) -> {
+                    String[] tokens = record.get(0).split("\\s+");
+                    contact.setFirstName(tokens[0].trim());
+                    contact.setLastName(tokens[1].trim());
+                    return contact;
+                });
         assertEquals(3, contacts.size());
         Contact contact = contacts.get(1);
         assertEquals(Address.State.CA, contact.getAddress().getState());
@@ -89,9 +89,9 @@ class FixedWidthReaderTest {
     @Test
     void testSkipProperties() throws IOException {
         FixedWidthReader<Contact> reader = FixedWidthReader.createWithIndexMapping(
-                Contact.class,
-                new String[]{"firstName", "lastName", null, null, null, null, "address.zip"},
-                new int[]{20, 20, 15, 25, 20, 5, 10})
+                        Contact.class,
+                        new String[]{"firstName", "lastName", null, null, null, null, "address.zip"},
+                        new int[]{20, 20, 15, 25, 20, 5, 10})
                 .withSkipRows(1);
         List<Contact> contacts = reader.readAll("contacts.txt");
         assertEquals(3, contacts.size());
@@ -107,9 +107,9 @@ class FixedWidthReaderTest {
     @Test
     void testWithComments() throws IOException {
         FixedWidthReader<Contact> reader = FixedWidthReader.createWithIndexMapping(
-                Contact.class,
-                new String[]{"firstName", "lastName", null, "address.numberAndStreet", "address.city", "address.state", "address.zip"},
-                new int[]{20, 20, 15, 25, 20, 5, 10})
+                        Contact.class,
+                        new String[]{"firstName", "lastName", null, "address.numberAndStreet", "address.city", "address.state", "address.zip"},
+                        new int[]{20, 20, 15, 25, 20, 5, 10})
                 .withSkipRows(1)
                 .withSkipEmptyLines()
                 .withSkipComments("//");
