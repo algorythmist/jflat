@@ -181,15 +181,15 @@ In the following example, we read an orders file where the Customers name appear
 We use a FlatFileReaderCallback to parse the complete name into first and last name:
 
 ```java
-    List<Order> orders = new ArrayList<>();
-    FlatFileReaderCallback<Order> callback = (record, order) -> {
+    List<Order> orders = 
+        FlatFileReaderCallback<Order> callback = (record, order) -> {
             String[] name = record.get(1).split(",");
             String lastName = name[0];
             String firstName = name[1];
             order.setCustomer(new Customer());
             order.getCustomer().setLastName(lastName);
             order.getCustomer().setFirstName(firstName);
-            orders.add(order);
+            return order;
     };
 
     String[] properties = new String[] { "number", "price" };
