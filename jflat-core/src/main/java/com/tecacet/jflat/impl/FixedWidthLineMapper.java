@@ -2,7 +2,6 @@ package com.tecacet.jflat.impl;
 
 import com.tecacet.jflat.LineMapper;
 import com.tecacet.jflat.RowRecord;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,7 @@ public class FixedWidthLineMapper implements LineMapper {
 		if (line.length() < totalWidth) {
 			logger.warn("Line {} has length {}, but expected at least a length of {}. Will attempt padding.",
 					lineNumber, line.length(), totalWidth);
-			line = StringUtils.rightPad(line, totalWidth);
+			line = rightPad(line, totalWidth);
 		}
 		int lastIndex = 0;
 		String[] tokens = new String[widths.length];
@@ -61,7 +60,7 @@ public class FixedWidthLineMapper implements LineMapper {
 			if (trimWhitespace) {
 				thisToken = thisToken.trim();
 			}
-			if (thisToken.length() == 0) {
+			if (thisToken.isEmpty()) {
 				thisToken = null;
 			}
 			tokens[i] = thisToken;
@@ -76,5 +75,9 @@ public class FixedWidthLineMapper implements LineMapper {
 
 	public void addSkipPredicate(Predicate<String> predicate) {
 		this.skipPredicate = this.skipPredicate.or(predicate);
+	}
+
+	private static String rightPad(String original, int length) {
+		return String.format("%-" + length + "s", original);
 	}
 }
