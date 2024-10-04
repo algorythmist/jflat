@@ -6,7 +6,7 @@
 
     <artifactId>jflat-excel</artifactId>
     <groupId>com.tecacet</groupId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>JFlat Excel</name>
@@ -19,18 +19,18 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-        <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
-        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+        <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+        <maven-javadoc-plugin.version>3.10.1</maven-javadoc-plugin.version>
         <maven.javadoc-plugin.failOnError>false</maven.javadoc-plugin.failOnError>
         <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version>
 
-        <poi.version>5.2.5</poi.version>
+        <poi.version>5.3.0</poi.version>
         <slf4j.version>[1.7.30,)</slf4j.version>
         <junit-jupiter.version>[5.10.1,)</junit-jupiter.version>
 
-        <jacoco.version>0.8.11</jacoco.version>
+        <jacoco.version>0.8.12</jacoco.version>
         <coverage.totalLineRate>0.75</coverage.totalLineRate>
         <coverage.missedclasses>0</coverage.missedclasses>
     </properties>
