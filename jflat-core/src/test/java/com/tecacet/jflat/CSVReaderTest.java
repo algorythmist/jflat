@@ -18,9 +18,10 @@ class CSVReaderTest {
     @Test
     void testDefaultReader() throws IOException {
         CSVReader<String[]> reader = CSVReader.defaultReader()
-                .withFormat(CSVFormat.RFC4180
-                        .withFirstRecordAsHeader()
-                        .withSkipHeaderRecord(true));
+                .withFormat(CSVFormat.RFC4180.builder()
+                        .setHeader()
+                        .setSkipHeaderRecord(true)
+                        .get());
         List<String[]> contacts = reader.readAll("contacts.csv");
         assertEquals(3, contacts.size());
         assertEquals("Homer", contacts.get(0)[0]);
@@ -44,7 +45,7 @@ class CSVReaderTest {
     void testWithIndexedMapping() throws IOException {
         FlatFileReader<ClassicQuote> csvReader = CSVReader.readerWithIndexMapping(ClassicQuote.class,
                 new String[]{"date", "open", null, null, "close", "volume", null})
-                .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader().withSkipHeaderRecord());
+                .withFormat(CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).get());
         List<ClassicQuote> quotes = csvReader.readAll("GLD.csv");
         assertEquals(134, quotes.size());
         ClassicQuote quote = quotes.get(10);
@@ -56,7 +57,7 @@ class CSVReaderTest {
     public void readAsStream() throws IOException {
         FlatFileReader<ImmutableQuote> csvReader = CSVReader.readerWithIndexMapping(ImmutableQuote.class,
                 new String[]{"date", "open", null, null, "close", "volume", "adjustedClose"})
-                .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader().withSkipHeaderRecord());
+                .withFormat(CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).get());
         LocalDate date = LocalDate.of(2015, 5, 1);
         InputStream is = ClassLoader.getSystemResourceAsStream("GLD.csv");
         ImmutableQuote quote = csvReader.readAsStream(is)
@@ -69,7 +70,7 @@ class CSVReaderTest {
     void readWithCallback() throws IOException {
         FlatFileReader<ImmutableQuote> csvReader = CSVReader.readerWithIndexMapping(ImmutableQuote.class,
                 new String[]{"date", "open", null, null, "close", "volume", "adjustedClose"})
-                .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader().withSkipHeaderRecord());
+                .withFormat(CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).get());
 
         List<RowRecord> records = new ArrayList<>();
         csvReader.read("GLD.csv", (row, bean) -> {
@@ -88,7 +89,7 @@ class CSVReaderTest {
                 CSVReader.readerWithHeaderMapping(ImmutableQuote.class, header, properties);
         List<ImmutableQuote> quotes = csvReader.readAll("GLD.csv");
         assertEquals(134, quotes.size());
-        ImmutableQuote quote = quotes.get(0);
+        ImmutableQuote quote = quotes.getFirst();
         assertEquals(LocalDate.of(2015, 12, 1), quote.getDate());
         assertEquals(102.30, quote.getOpen().doubleValue(), 0.001);
         assertEquals(5800200L, quote.getVolume().longValue());
@@ -170,7 +171,7 @@ class CSVReaderTest {
         CSVReader<Contact> csvReader = CSVReader
                 .readerWithHeaderMapping(Contact.class, header, properties)
                 .registerConverter(Telephone.class, Telephone::new)
-                .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader().withCommentMarker('#'));
+                .withFormat(CSVFormat.DEFAULT.builder().setHeader().setCommentMarker('#').get());
         List<Contact> contacts = csvReader.readAll("contacts_with_comments.csv");
         assertEquals(3, contacts.size());
     }

@@ -21,9 +21,10 @@ class FixedWidthWriterTest {
     @Test
     void testDefaultWriter() throws IOException {
         CSVReader<String[]> reader = CSVReader.defaultReader()
-                .withFormat(CSVFormat.RFC4180
-                        .withFirstRecordAsHeader()
-                        .withSkipHeaderRecord(true));
+                .withFormat(CSVFormat.RFC4180.builder()
+                        .setHeader()
+                        .setSkipHeaderRecord(true)
+                        .get());
         List<String[]> contacts = reader.readAll("contacts.csv");
 
         int[] widths = {20, 20, 15, 25, 20, 5, 10};

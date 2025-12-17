@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CSVRowRecord implements RowRecord {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final CSVRecord csvRecord;
 
