@@ -44,7 +44,7 @@ class ExcelReaderTest {
 
         List<Quote> rows = reader.readAll(filename);
         assertEquals(134, rows.size());
-        Quote firstRow = rows.get(0);
+        Quote firstRow = rows.getFirst();
         assertEquals("Quote1 [date=2015-12-01, open=102.3, close=101.46, volume=5800200]",
                 firstRow.toString());
     }

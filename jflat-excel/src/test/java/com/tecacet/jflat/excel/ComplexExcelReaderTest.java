@@ -19,7 +19,7 @@ public class ComplexExcelReaderTest {
         FlatFileReader<TimeEntry> reader = ExcelReader.createWithHeaderMapping(TimeEntry.class, header, properties);
 
         List<TimeEntry> entries = reader.readAll("Timesheet.xls");
-        TimeEntry entry = entries.get(0);
+        TimeEntry entry = entries.getFirst();
         assertEquals("5018", entry.getIdentifier());
         assertEquals(LocalDate.of(2010, 4, 1), entry.getDate());
         assertEquals("Ad Hoc Meetings", entry.getDescription());
